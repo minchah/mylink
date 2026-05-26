@@ -6,9 +6,9 @@ import Link from "next/link";
 export default function MyPage() {
     const [links, setLinks] = useState([
         { id: 1, title: "GitHub", url: "https://github.com", icon: "💻" },
-        { id: 2, title: "인스타그램", url: "https://instagram.com", icon: "📸" },
-        { id: 3, title: "유튜브", url: "https://youtube.com", icon: "🎬" },
-        { id: 4, title: "블로그", url: "https://myblog.com", icon: "✍️" },
+        { id: 2, title: "Instagram", url: "https://instagram.com", icon: "📸" },
+        { id: 3, title: "Youtube", url: "https://youtube.com", icon: "🎬" },
+        { id: 4, title: "Blog", url: "https://myblog.com", icon: "✍️" },
     ]);
     const [title, setTitle] = useState("");
     const [url, setUrl] = useState("");
