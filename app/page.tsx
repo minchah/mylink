@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 export default function Home() {
   const links = [
     {
@@ -18,9 +17,9 @@ export default function Home() {
       url: "https://instagram.com",
       icon: (
         <svg className="w-6 h-6 stroke-current fill-none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
         </svg>
       )
     },
@@ -40,14 +39,13 @@ export default function Home() {
       url: "https://myblog.com",
       icon: (
         <svg className="w-6 h-6 stroke-current fill-none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-          <polyline points="22,6 12,13 2,6"></polyline>
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+          <polyline points="22,6 12,13 2,6" />
         </svg>
       )
-    },
+    }
   ];
 
-  // Helper to generate random star styles
   const stars = Array.from({ length: 40 }).map((_, i) => ({
     top: `${Math.random() * 100}%`,
     left: `${Math.random() * 100}%`,
@@ -58,25 +56,8 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen flex flex-col items-center py-16 px-4 overflow-hidden bg-[#020617]">
-      {/* Stars Background */}
-      <div className="absolute inset-0 z-0">
-        {stars.map((star, i) => (
-          <div
-            key={i}
-            className="star"
-            style={{
-              top: star.top,
-              left: star.left,
-              width: star.size,
-              height: star.size,
-              "--duration": star.duration,
-              animationDelay: star.delay,
-            } as any}
-          />
-        ))}
-      </div>
+      <div className="absolute inset-0 z-0"></div>
 
-      {/* Nebula Effect */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] z-0 animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] z-0 animate-pulse" />
 
@@ -90,6 +71,8 @@ export default function Home() {
           <h1 className="text-3xl font-bold text-white tracking-tight">Minha Park</h1>
           <p className="text-blue-200/80 mt-2 font-medium">my links</p>
         </div>
+
+
 
         <div className="space-y-4">
           {links.map((link) => (
