@@ -71,6 +71,10 @@ export default function MyPage() {
 
     // 로그인 상태 감지
     useEffect(() => {
+        if (!auth) {
+            setLoading(false);
+            return;
+        }
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             setLoading(false);
@@ -80,7 +84,7 @@ export default function MyPage() {
 
     // Firestore 실시간 구독 (onSnapshot 사용으로 즉각 갱신)
     useEffect(() => {
-        if (!user) {
+        if (!user || !db) {
             setLinks([]);
             return;
         }
@@ -99,11 +103,11 @@ export default function MyPage() {
         });
 
         return () => unsubscribe();
-    }, [user]);
+    }, [user, db]);
 
     // 프로필 & SNS 정보 구독
     useEffect(() => {
-        if (!user) return;
+        if (!user || !db) return;
         const profileRef = doc(db, "profile", "main");
         const unsubscribe = onSnapshot(profileRef, (docSnap) => {
             if (docSnap.exists()) {
@@ -129,10 +133,14 @@ export default function MyPage() {
             }
         });
         return () => unsubscribe();
-    }, [user]);
+    }, [user, db]);
 
     // Google 로그인
     const handleLogin = async () => {
+        if (!auth || !googleProvider) {
+            alert("인증이 초기화되지 않았습니다. 페이지를 새로고침해 주세요.");
+            return;
+        }
         try {
             await signInWithPopup(auth, googleProvider);
             alert("로그인에 성공했습니다! 👋");
@@ -144,35 +152,36 @@ export default function MyPage() {
 
     // 로그아웃
     const handleLogout = async () => {
-        if (window.confirm("로그아웃 하시겠습니까?")) {
+    if (window.confirm("로그아웃 하시겠습니까?")) {
+        if (auth) {
             await signOut(auth);
             alert("로그아웃 되었습니다.");
+        } else {
+            console.error("Auth not initialized");
         }
-    };
+    }
+};
 
     // 프로필 & SNS 저장
     const handleSaveProfile = async () => {
         if (!user) return;
         try {
-            const profileRef = doc(db, "profile", "main");
-            await setDoc(profileRef, {
-                displayName: profileName.trim(),
-                bio: profileBio.trim(),
-                
-                githubTitle: githubTitle.trim(),
-                githubUrl: githubUrl.trim(),
-                
-                instagramTitle: instagramTitle.trim(),
-                instagramUrl: instagramUrl.trim(),
-                
-                youtubeTitle: youtubeTitle.trim(),
-                youtubeUrl: youtubeUrl.trim(),
-                
-                emailTitle: emailTitle.trim(),
-                emailUrl: emailUrl.trim(),
-                
-                updatedAt: serverTimestamp(),
-            }, { merge: true });
+            if (!db) { alert("데이터베이스가 초기화되지 않았습니다."); return; }
+        const profileRef = doc(db, "profile", "main");
+        await setDoc(profileRef, {
+            displayName: profileName.trim(),
+            bio: profileBio.trim(),
+            githubTitle: githubTitle.trim(),
+            githubUrl: githubUrl.trim(),
+            instagramTitle: instagramTitle.trim(),
+            instagramUrl: instagramUrl.trim(),
+            youtubeTitle: youtubeTitle.trim(),
+            youtubeUrl: youtubeUrl.trim(),
+            emailTitle: emailTitle.trim(),
+            emailUrl: emailUrl.trim(),
+            userId: user.uid,
+            updatedAt: serverTimestamp(),
+        }, { merge: true });
             alert("프로필 및 SNS 설정이 성공적으로 저장되었습니다! 💾");
         } catch (e) {
             console.error("프로필 저장 실패:", e);
@@ -188,6 +197,7 @@ export default function MyPage() {
 
         const finalUrl = formatUrl(url);
         try {
+            if (!db) { alert("데이터베이스가 초기화되지 않았습니다."); return; }
             const ref = collection(db, "links");
             await addDoc(ref, {
                 title: title.trim(),
@@ -195,7 +205,7 @@ export default function MyPage() {
                 faviconUrl: getFaviconUrl(finalUrl),
                 createdAt: serverTimestamp(),
                 userId: user.uid,
-                clickCount: 0, // 초기 클릭 수 설정
+                clickCount: 0,
             });
             setTitle(""); setUrl(""); setError("");
             alert("링크가 성공적으로 추가되었습니다! 🎉");
@@ -209,6 +219,7 @@ export default function MyPage() {
     const handleDelete = async (id: string) => {
         if (!user || !window.confirm("정말 삭제하시겠습니까?")) return;
         try {
+            if (!db) { alert("데이터베이스가 초기화되지 않았습니다."); return; }
             await deleteDoc(doc(db, "links", id));
             alert("링크가 정상적으로 삭제되었습니다.");
         } catch (e) {
@@ -229,6 +240,8 @@ export default function MyPage() {
         if (!user || !editingId || !editTitle.trim() || !editUrl.trim()) return;
         const finalUrl = formatUrl(editUrl);
         try {
+            if (!db) { alert("데이터베이스가 초기화되지 않았습니다."); return; }
+            if (!db) { alert("데이터베이스가 초기화되지 않았습니다."); return; }
             await updateDoc(doc(db, "links", editingId), {
                 title: editTitle.trim(),
                 url: finalUrl,

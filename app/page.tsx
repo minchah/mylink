@@ -11,15 +11,27 @@ type LinkItem = {
   url: string;
   faviconUrl: string;
   clickCount?: number;
+  isSns?: string;
 };
 
 type ProfileData = {
   displayName: string;
   bio: string;
-  github?: string;
-  instagram?: string;
-  youtube?: string;
-  email?: string;
+  // SNS titles (optional)
+  githubTitle?: string;
+  instagramTitle?: string;
+  youtubeTitle?: string;
+  emailTitle?: string;
+  // SNS URLs (optional)
+  githubUrl?: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
+  emailUrl?: string;
+  // Click counters (optional, default 0)
+  githubClickCount?: number;
+  instagramClickCount?: number;
+  youtubeClickCount?: number;
+  emailClickCount?: number;
 };
 
 export default function Home() {
@@ -32,6 +44,7 @@ export default function Home() {
 
   // 프로필 정보 가져오기 (실시간)
   useEffect(() => {
+    if (!db) return;
     const profileRef = doc(db, "profile", "main");
     const unsubscribe = onSnapshot(profileRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -41,10 +54,11 @@ export default function Home() {
       console.error("프로필 로드 실패:", err);
     });
     return () => unsubscribe();
-  }, []);
+  }, [db]);
 
   // 링크 목록 가져오기 (실시간)
   useEffect(() => {
+    if (!db) return;
     const ref = collection(db, "links");
     const q = query(ref, orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snap) => {
@@ -56,10 +70,14 @@ export default function Home() {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, []);
+  }, [db]);
 
   // 링크 클릭 트래킹
   const handleLinkClick = async (linkItem: any) => {
+    if (!db) {
+      console.error('Firestore not initialized');
+      return;
+    }
     try {
       // 1. Firebase Analytics에 이벤트 로깅
       logFirebaseEvent("link_click", {
