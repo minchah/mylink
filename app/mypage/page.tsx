@@ -168,7 +168,7 @@ export default function MyPage() {
         try {
             if (!db) { alert("데이터베이스가 초기화되지 않았습니다."); return; }
         const profileRef = doc(db, "profile", "main");
-        await setDoc(profileRef, {
+        const profileData = {
             displayName: profileName.trim(),
             bio: profileBio.trim(),
             githubTitle: githubTitle.trim(),
@@ -181,7 +181,9 @@ export default function MyPage() {
             emailUrl: emailUrl.trim(),
             userId: user.uid,
             updatedAt: serverTimestamp(),
-        }, { merge: true });
+        };
+        console.log("Saving profile data:", profileData);
+        await setDoc(profileRef, profileData, { merge: true });
             alert("프로필 및 SNS 설정이 성공적으로 저장되었습니다! 💾");
         } catch (e) {
             console.error("프로필 저장 실패:", e);
